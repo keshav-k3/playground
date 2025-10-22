@@ -30,13 +30,14 @@ services:
       - app
 
   db:
-    image: postgres:15-alpine
+    image: postgres:15
     container_name: larawell-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-larawell}
-      POSTGRES_USER: ${DB_USERNAME:-larawell}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_DB: larawell
+      POSTGRES_USER: larawell
+      POSTGRES_PASSWORD: secret
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:

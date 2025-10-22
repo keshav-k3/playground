@@ -39,9 +39,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Install composer dependencies
-RUN composer install --optimize-autoloader --no-dev
-
 # Expose port 80
 EXPOSE 80
 
