@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,16 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+/*
+|--------------------------------------------------------------------------
+| Task Scheduling
+|--------------------------------------------------------------------------
+|
+| Here you may define all of your scheduled tasks. Laravel's scheduler
+| allows you to expressively define your command schedule within this file.
+|
+*/
+
+// Example scheduled task (uncomment to use):
+// Schedule::command('inspire')->hourly();
