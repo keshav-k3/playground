@@ -72,5 +72,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'password',
             'password_confirmation',
         ]);
+
+        // Integrate Sentry for exception tracking
+        $exceptions->reportable(function (Throwable $e) {
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
+        });
     })
     ->create();
