@@ -54,10 +54,93 @@ services:
     networks:
       - larawell-network
 
+  # Sentry Services
+  sentry-redis:
+    image: redis:alpine
+    container_name: sentry-redis
+    restart: unless-stopped
+    networks:
+      - larawell-network
+
+  sentry-postgres:
+    image: postgres:15
+    container_name: sentry-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sentry
+      POSTGRES_PASSWORD: sentry
+      POSTGRES_DB: sentry
+    volumes:
+      - sentry-postgres:/var/lib/postgresql/data
+    networks:
+      - larawell-network
+
+  sentry:
+    image: sentry:latest
+    container_name: sentry
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      SENTRY_SECRET_KEY: 'changeme-please-generate-a-secret-key'
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_REDIS_HOST: sentry-redis
+    depends_on:
+      - sentry-redis
+      - sentry-postgres
+    networks:
+      - larawell-network
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+
+  sentry-cron:
+    image: sentry:latest
+    container_name: sentry-cron
+    restart: unless-stopped
+    command: run cron
+    environment:
+      SENTRY_SECRET_KEY: 'changeme-please-generate-a-secret-key'
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_REDIS_HOST: sentry-redis
+    depends_on:
+      - sentry-redis
+      - sentry-postgres
+    networks:
+      - larawell-network
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+
+  sentry-worker:
+    image: sentry:latest
+    container_name: sentry-worker
+    restart: unless-stopped
+    command: run worker
+    environment:
+      SENTRY_SECRET_KEY: 'changeme-please-generate-a-secret-key'
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentry
+      SENTRY_REDIS_HOST: sentry-redis
+    depends_on:
+      - sentry-redis
+      - sentry-postgres
+    networks:
+      - larawell-network
+    volumes:
+      - sentry-data:/var/lib/sentry/files
+
 networks:
   larawell-network:
     driver: bridge
 
 volumes:
   dbdata:
+    driver: local
+  sentry-postgres:
+    driver: local
+  sentry-data:
     driver: local
